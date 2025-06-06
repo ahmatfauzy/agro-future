@@ -1,0 +1,382 @@
+{
+  "padi": {
+    "temperature": {
+      "optimal": { "min": 22, "max": 32 },
+      "acceptable": { "min": 20, "max": 35 }
+    },
+    "rainfall": {
+      "optimal": { "min": 150, "max": 300 },
+      "acceptable": { "min": 100, "max": 400 }
+    },
+    "humidity": {
+      "optimal": { "min": 70, "max": 85 },
+      "acceptable": { "min": 60, "max": 90 }
+    },
+    "avoidConditions": {
+      "maxConsecutiveDryDays": 7,
+      "maxDailyRainfall": 50,
+      "minTemperature": 18
+    }
+  },
+  "jagung": {
+    "temperature": {
+      "optimal": { "min": 20, "max": 30 },
+      "acceptable": { "min": 18, "max": 35 }
+    },
+    "rainfall": {
+      "optimal": { "min": 100, "max": 200 },
+      "acceptable": { "min": 80, "max": 250 }
+    },
+    "humidity": {
+      "optimal": { "min": 60, "max": 75 },
+      "acceptable": { "min": 50, "max": 80 }
+    },
+    "avoidConditions": {
+      "maxConsecutiveDryDays": 10,
+      "maxDailyRainfall": 40,
+      "minTemperature": 15
+    }
+  },
+  "kedelai": {
+    "temperature": {
+      "optimal": { "min": 23, "max": 27 },
+      "acceptable": { "min": 20, "max": 30 }
+    },
+    "rainfall": {
+      "optimal": { "min": 80, "max": 150 },
+      "acceptable": { "min": 60, "max": 200 }
+    },
+    "humidity": {
+      "optimal": { "min": 65, "max": 80 },
+      "acceptable": { "min": 55, "max": 85 }
+    },
+    "avoidConditions": {
+      "maxConsecutiveDryDays": 8,
+      "maxDailyRainfall": 35,
+      "minTemperature": 18
+    }
+  },
+  "cabai": {
+    "temperature": {
+      "optimal": { "min": 24, "max": 28 },
+      "acceptable": { "min": 20, "max": 32 }
+    },
+    "rainfall": {
+      "optimal": { "min": 60, "max": 120 },
+      "acceptable": { "min": 40, "max": 150 }
+    },
+    "humidity": {
+      "optimal": { "min": 60, "max": 75 },
+      "acceptable": { "min": 50, "max": 80 }
+    },
+    "avoidConditions": {
+      "maxConsecutiveDryDays": 5,
+      "maxDailyRainfall": 30,
+      "minTemperature": 16
+    }
+  },
+  "tomat": {
+    "temperature": {
+      "optimal": { "min": 20, "max": 25 },
+      "acceptable": { "min": 18, "max": 30 }
+    },
+    "rainfall": {
+      "optimal": { "min": 50, "max": 100 },
+      "acceptable": { "min": 30, "max": 130 }
+    },
+    "humidity": {
+      "optimal": { "min": 55, "max": 70 },
+      "acceptable": { "min": 45, "max": 75 }
+    },
+    "avoidConditions": {
+      "maxConsecutiveDryDays": 6,
+      "maxDailyRainfall": 25,
+      "minTemperature": 15
+    }
+  },
+  "bawang_merah": {
+    "temperature": {
+      "optimal": { "min": 25, "max": 32 },
+      "acceptable": { "min": 20, "max": 35 }
+    },
+    "rainfall": {
+      "optimal": { "min": 40, "max": 80 },
+      "acceptable": { "min": 20, "max": 100 }
+    },
+    "humidity": {
+      "optimal": { "min": 50, "max": 70 },
+      "acceptable": { "min": 40, "max": 75 }
+    },
+    "avoidConditions": {
+      "maxConsecutiveDryDays": 15,
+      "maxDailyRainfall": 20,
+      "minTemperature": 18
+    }
+  },
+  "bawang_putih": {
+    "temperature": {
+      "optimal": { "min": 16, "max": 25 },
+      "acceptable": { "min": 12, "max": 28 }
+    },
+    "rainfall": {
+      "optimal": { "min": 30, "max": 70 },
+      "acceptable": { "min": 20, "max": 90 }
+    },
+    "humidity": {
+      "optimal": { "min": 50, "max": 65 },
+      "acceptable": { "min": 40, "max": 70 }
+    },
+    "avoidConditions": {
+      "maxConsecutiveDryDays": 20,
+      "maxDailyRainfall": 15,
+      "minTemperature": 10
+    }
+  },
+  "kentang": {
+    "temperature": {
+      "optimal": { "min": 15, "max": 20 },
+      "acceptable": { "min": 10, "max": 25 }
+    },
+    "rainfall": {
+      "optimal": { "min": 80, "max": 150 },
+      "acceptable": { "min": 60, "max": 180 }
+    },
+    "humidity": {
+      "optimal": { "min": 60, "max": 75 },
+      "acceptable": { "min": 50, "max": 80 }
+    },
+    "avoidConditions": {
+      "maxConsecutiveDryDays": 7,
+      "maxDailyRainfall": 30,
+      "minTemperature": 8
+    }
+  },
+  "wortel": {
+    "temperature": {
+      "optimal": { "min": 16, "max": 22 },
+      "acceptable": { "min": 12, "max": 26 }
+    },
+    "rainfall": {
+      "optimal": { "min": 60, "max": 120 },
+      "acceptable": { "min": 40, "max": 150 }
+    },
+    "humidity": {
+      "optimal": { "min": 60, "max": 75 },
+      "acceptable": { "min": 50, "max": 80 }
+    },
+    "avoidConditions": {
+      "maxConsecutiveDryDays": 8,
+      "maxDailyRainfall": 25,
+      "minTemperature": 10
+    }
+  },
+  "bayam": {
+    "temperature": {
+      "optimal": { "min": 20, "max": 30 },
+      "acceptable": { "min": 15, "max": 35 }
+    },
+    "rainfall": {
+      "optimal": { "min": 50, "max": 100 },
+      "acceptable": { "min": 30, "max": 120 }
+    },
+    "humidity": {
+      "optimal": { "min": 65, "max": 80 },
+      "acceptable": { "min": 55, "max": 85 }
+    },
+    "avoidConditions": {
+      "maxConsecutiveDryDays": 5,
+      "maxDailyRainfall": 30,
+      "minTemperature": 12
+    }
+  },
+  "kangkung": {
+    "temperature": {
+      "optimal": { "min": 25, "max": 35 },
+      "acceptable": { "min": 20, "max": 38 }
+    },
+    "rainfall": {
+      "optimal": { "min": 80, "max": 150 },
+      "acceptable": { "min": 60, "max": 180 }
+    },
+    "humidity": {
+      "optimal": { "min": 70, "max": 85 },
+      "acceptable": { "min": 60, "max": 90 }
+    },
+    "avoidConditions": {
+      "maxConsecutiveDryDays": 4,
+      "maxDailyRainfall": 40,
+      "minTemperature": 18
+    }
+  },
+  "sawi": {
+    "temperature": {
+      "optimal": { "min": 20, "max": 25 },
+      "acceptable": { "min": 15, "max": 30 }
+    },
+    "rainfall": {
+      "optimal": { "min": 60, "max": 120 },
+      "acceptable": { "min": 40, "max": 150 }
+    },
+    "humidity": {
+      "optimal": { "min": 65, "max": 80 },
+      "acceptable": { "min": 55, "max": 85 }
+    },
+    "avoidConditions": {
+      "maxConsecutiveDryDays": 5,
+      "maxDailyRainfall": 30,
+      "minTemperature": 12
+    }
+  },
+  "terong": {
+    "temperature": {
+      "optimal": { "min": 22, "max": 30 },
+      "acceptable": { "min": 18, "max": 35 }
+    },
+    "rainfall": {
+      "optimal": { "min": 70, "max": 130 },
+      "acceptable": { "min": 50, "max": 160 }
+    },
+    "humidity": {
+      "optimal": { "min": 60, "max": 75 },
+      "acceptable": { "min": 50, "max": 80 }
+    },
+    "avoidConditions": {
+      "maxConsecutiveDryDays": 6,
+      "maxDailyRainfall": 35,
+      "minTemperature": 15
+    }
+  },
+  "timun": {
+    "temperature": {
+      "optimal": { "min": 20, "max": 30 },
+      "acceptable": { "min": 16, "max": 35 }
+    },
+    "rainfall": {
+      "optimal": { "min": 60, "max": 120 },
+      "acceptable": { "min": 40, "max": 150 }
+    },
+    "humidity": {
+      "optimal": { "min": 60, "max": 75 },
+      "acceptable": { "min": 50, "max": 80 }
+    },
+    "avoidConditions": {
+      "maxConsecutiveDryDays": 6,
+      "maxDailyRainfall": 30,
+      "minTemperature": 14
+    }
+  },
+  "labu": {
+    "temperature": {
+      "optimal": { "min": 18, "max": 27 },
+      "acceptable": { "min": 15, "max": 32 }
+    },
+    "rainfall": {
+      "optimal": { "min": 80, "max": 150 },
+      "acceptable": { "min": 60, "max": 180 }
+    },
+    "humidity": {
+      "optimal": { "min": 60, "max": 75 },
+      "acceptable": { "min": 50, "max": 80 }
+    },
+    "avoidConditions": {
+      "maxConsecutiveDryDays": 7,
+      "maxDailyRainfall": 35,
+      "minTemperature": 12
+    }
+  },
+  "kacang_tanah": {
+    "temperature": {
+      "optimal": { "min": 23, "max": 33 },
+      "acceptable": { "min": 20, "max": 36 }
+    },
+    "rainfall": {
+      "optimal": { "min": 80, "max": 130 },
+      "acceptable": { "min": 60, "max": 160 }
+    },
+    "humidity": {
+      "optimal": { "min": 60, "max": 75 },
+      "acceptable": { "min": 50, "max": 80 }
+    },
+    "avoidConditions": {
+      "maxConsecutiveDryDays": 10,
+      "maxDailyRainfall": 30,
+      "minTemperature": 18
+    }
+  },
+  "kacang_panjang": {
+    "temperature": {
+      "optimal": { "min": 20, "max": 30 },
+      "acceptable": { "min": 16, "max": 35 }
+    },
+    "rainfall": {
+      "optimal": { "min": 70, "max": 120 },
+      "acceptable": { "min": 50, "max": 150 }
+    },
+    "humidity": {
+      "optimal": { "min": 65, "max": 80 },
+      "acceptable": { "min": 55, "max": 85 }
+    },
+    "avoidConditions": {
+      "maxConsecutiveDryDays": 6,
+      "maxDailyRainfall": 30,
+      "minTemperature": 14
+    }
+  },
+  "singkong": {
+    "temperature": {
+      "optimal": { "min": 20, "max": 35 },
+      "acceptable": { "min": 18, "max": 38 }
+    },
+    "rainfall": {
+      "optimal": { "min": 100, "max": 200 },
+      "acceptable": { "min": 80, "max": 250 }
+    },
+    "humidity": {
+      "optimal": { "min": 60, "max": 80 },
+      "acceptable": { "min": 50, "max": 85 }
+    },
+    "avoidConditions": {
+      "maxConsecutiveDryDays": 15,
+      "maxDailyRainfall": 50,
+      "minTemperature": 16
+    }
+  },
+  "ubi_jalar": {
+    "temperature": {
+      "optimal": { "min": 21, "max": 27 },
+      "acceptable": { "min": 18, "max": 32 }
+    },
+    "rainfall": {
+      "optimal": { "min": 75, "max": 150 },
+      "acceptable": { "min": 60, "max": 180 }
+    },
+    "humidity": {
+      "optimal": { "min": 60, "max": 75 },
+      "acceptable": { "min": 50, "max": 80 }
+    },
+    "avoidConditions": {
+      "maxConsecutiveDryDays": 10,
+      "maxDailyRainfall": 35,
+      "minTemperature": 15
+    }
+  },
+  "buncis": {
+    "temperature": {
+      "optimal": { "min": 18, "max": 25 },
+      "acceptable": { "min": 15, "max": 30 }
+    },
+    "rainfall": {
+      "optimal": { "min": 60, "max": 110 },
+      "acceptable": { "min": 40, "max": 140 }
+    },
+    "humidity": {
+      "optimal": { "min": 60, "max": 75 },
+      "acceptable": { "min": 50, "max": 80 }
+    },
+    "avoidConditions": {
+      "maxConsecutiveDryDays": 7,
+      "maxDailyRainfall": 25,
+      "minTemperature": 12
+    }
+  }
+}

@@ -1,0 +1,202 @@
+[
+  {
+    "id": "padi",
+    "name": "Padi",
+    "description": "Tanaman pangan utama",
+    "optimalTemp": { "min": 22, "max": 32 },
+    "rainfallNeeds": { "min": 150, "max": 300 },
+    "plantingSeason": "Musim hujan (Nov-Mar)",
+    "growthPeriod": 120,
+    "waterRequirement": "tinggi"
+  },
+  {
+    "id": "jagung",
+    "name": "Jagung",
+    "description": "Tanaman serealia",
+    "optimalTemp": { "min": 20, "max": 30 },
+    "rainfallNeeds": { "min": 100, "max": 200 },
+    "plantingSeason": "Musim kemarau (Apr-Sep)",
+    "growthPeriod": 90,
+    "waterRequirement": "sedang"
+  },
+  {
+    "id": "kedelai",
+    "name": "Kedelai",
+    "description": "Tanaman kacang-kacangan",
+    "optimalTemp": { "min": 23, "max": 27 },
+    "rainfallNeeds": { "min": 80, "max": 150 },
+    "plantingSeason": "Musim kemarau (Apr-Aug)",
+    "growthPeriod": 80,
+    "waterRequirement": "sedang"
+  },
+  {
+    "id": "cabai",
+    "name": "Cabai",
+    "description": "Tanaman hortikultura",
+    "optimalTemp": { "min": 24, "max": 28 },
+    "rainfallNeeds": { "min": 60, "max": 120 },
+    "plantingSeason": "Sepanjang tahun",
+    "growthPeriod": 100,
+    "waterRequirement": "sedang"
+  },
+  {
+    "id": "tomat",
+    "name": "Tomat",
+    "description": "Tanaman sayuran",
+    "optimalTemp": { "min": 20, "max": 25 },
+    "rainfallNeeds": { "min": 50, "max": 100 },
+    "plantingSeason": "Musim kemarau (Apr-Sep)",
+    "growthPeriod": 85,
+    "waterRequirement": "sedang"
+  },
+  {
+    "id": "bawang_merah",
+    "name": "Bawang Merah",
+    "description": "Tanaman bumbu dapur",
+    "optimalTemp": { "min": 25, "max": 32 },
+    "rainfallNeeds": { "min": 40, "max": 80 },
+    "plantingSeason": "Musim kemarau (Apr-Sep)",
+    "growthPeriod": 70,
+    "waterRequirement": "rendah"
+  },
+  {
+    "id": "bawang_putih",
+    "name": "Bawang Putih",
+    "description": "Tanaman bumbu dapur",
+    "optimalTemp": { "min": 16, "max": 25 },
+    "rainfallNeeds": { "min": 30, "max": 70 },
+    "plantingSeason": "Musim kemarau (Apr-Aug)",
+    "growthPeriod": 90,
+    "waterRequirement": "rendah"
+  },
+  {
+    "id": "kentang",
+    "name": "Kentang",
+    "description": "Tanaman umbi-umbian",
+    "optimalTemp": { "min": 15, "max": 20 },
+    "rainfallNeeds": { "min": 80, "max": 150 },
+    "plantingSeason": "Dataran tinggi sepanjang tahun",
+    "growthPeriod": 90,
+    "waterRequirement": "sedang"
+  },
+  {
+    "id": "wortel",
+    "name": "Wortel",
+    "description": "Tanaman sayuran akar",
+    "optimalTemp": { "min": 16, "max": 22 },
+    "rainfallNeeds": { "min": 60, "max": 120 },
+    "plantingSeason": "Musim kemarau (Apr-Sep)",
+    "growthPeriod": 75,
+    "waterRequirement": "sedang"
+  },
+  {
+    "id": "bayam",
+    "name": "Bayam",
+    "description": "Tanaman sayuran hijau",
+    "optimalTemp": { "min": 20, "max": 30 },
+    "rainfallNeeds": { "min": 50, "max": 100 },
+    "plantingSeason": "Sepanjang tahun",
+    "growthPeriod": 30,
+    "waterRequirement": "sedang"
+  },
+  {
+    "id": "kangkung",
+    "name": "Kangkung",
+    "description": "Tanaman sayuran hijau",
+    "optimalTemp": { "min": 25, "max": 35 },
+    "rainfallNeeds": { "min": 80, "max": 150 },
+    "plantingSeason": "Sepanjang tahun",
+    "growthPeriod": 25,
+    "waterRequirement": "tinggi"
+  },
+  {
+    "id": "sawi",
+    "name": "Sawi",
+    "description": "Tanaman sayuran hijau",
+    "optimalTemp": { "min": 20, "max": 25 },
+    "rainfallNeeds": { "min": 60, "max": 120 },
+    "plantingSeason": "Sepanjang tahun",
+    "growthPeriod": 40,
+    "waterRequirement": "sedang"
+  },
+  {
+    "id": "terong",
+    "name": "Terong",
+    "description": "Tanaman sayuran buah",
+    "optimalTemp": { "min": 22, "max": 30 },
+    "rainfallNeeds": { "min": 70, "max": 130 },
+    "plantingSeason": "Sepanjang tahun",
+    "growthPeriod": 85,
+    "waterRequirement": "sedang"
+  },
+  {
+    "id": "timun",
+    "name": "Timun",
+    "description": "Tanaman sayuran buah",
+    "optimalTemp": { "min": 20, "max": 30 },
+    "rainfallNeeds": { "min": 60, "max": 120 },
+    "plantingSeason": "Sepanjang tahun",
+    "growthPeriod": 55,
+    "waterRequirement": "sedang"
+  },
+  {
+    "id": "labu",
+    "name": "Labu",
+    "description": "Tanaman sayuran buah",
+    "optimalTemp": { "min": 18, "max": 27 },
+    "rainfallNeeds": { "min": 80, "max": 150 },
+    "plantingSeason": "Musim kemarau (Apr-Sep)",
+    "growthPeriod": 95,
+    "waterRequirement": "sedang"
+  },
+  {
+    "id": "kacang_tanah",
+    "name": "Kacang Tanah",
+    "description": "Tanaman kacang-kacangan",
+    "optimalTemp": { "min": 23, "max": 33 },
+    "rainfallNeeds": { "min": 80, "max": 130 },
+    "plantingSeason": "Musim kemarau (Apr-Sep)",
+    "growthPeriod": 90,
+    "waterRequirement": "sedang"
+  },
+  {
+    "id": "kacang_panjang",
+    "name": "Kacang Panjang",
+    "description": "Tanaman sayuran polong",
+    "optimalTemp": { "min": 20, "max": 30 },
+    "rainfallNeeds": { "min": 70, "max": 120 },
+    "plantingSeason": "Sepanjang tahun",
+    "growthPeriod": 60,
+    "waterRequirement": "sedang"
+  },
+  {
+    "id": "singkong",
+    "name": "Singkong",
+    "description": "Tanaman umbi-umbian",
+    "optimalTemp": { "min": 20, "max": 35 },
+    "rainfallNeeds": { "min": 100, "max": 200 },
+    "plantingSeason": "Awal musim hujan (Okt-Des)",
+    "growthPeriod": 240,
+    "waterRequirement": "sedang"
+  },
+  {
+    "id": "ubi_jalar",
+    "name": "Ubi Jalar",
+    "description": "Tanaman umbi-umbian",
+    "optimalTemp": { "min": 21, "max": 27 },
+    "rainfallNeeds": { "min": 75, "max": 150 },
+    "plantingSeason": "Musim kemarau (Apr-Aug)",
+    "growthPeriod": 120,
+    "waterRequirement": "sedang"
+  },
+  {
+    "id": "buncis",
+    "name": "Buncis",
+    "description": "Tanaman sayuran polong",
+    "optimalTemp": { "min": 18, "max": 25 },
+    "rainfallNeeds": { "min": 60, "max": 110 },
+    "plantingSeason": "Musim kemarau (Apr-Sep)",
+    "growthPeriod": 65,
+    "waterRequirement": "sedang"
+  }
+]
