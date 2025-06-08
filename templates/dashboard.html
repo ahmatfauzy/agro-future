@@ -1,0 +1,837 @@
+{% extends 'base.html' %} {% block title %}Dashboard - Penentu Waktu Tanam
+Terbaik{% endblock %} {% block head %}
+<style>
+  .loading-spinner {
+    border: 4px solid rgba(0, 0, 0, 0.1);
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border-left-color: #4caf50;
+    animation: spin 1s linear infinite;
+  }
+
+  @keyframes spin {
+    0% {
+      transform: rotate(0deg);
+    }
+
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+
+  .status-optimal {
+    background-color: #d1fae5;
+    border-color: #10b981;
+  }
+
+  .status-good {
+    background-color: #fef3c7;
+    border-color: #f59e0b;
+  }
+
+  .status-poor {
+    background-color: #ffedd5;
+    border-color: #f97316;
+  }
+
+  .status-bad {
+    background-color: #fee2e2;
+    border-color: #ef4444;
+  }
+</style>
+{% endblock %} {% block content %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+  <div class="mb-8">
+    <h1 class="text-3xl font-bold text-gray-900">Dashboard Analisis Tanam</h1>
+    <p class="mt-2 text-gray-600">
+      Daerah: Tegal, Jawa Tengah • Prakiraan 8 Hari Kedepan
+    </p>
+  </div>
+
+  <div id="loading" class="flex justify-center items-center h-64">
+    <div class="flex flex-col items-center">
+      <div class="loading-spinner"></div>
+      <span class="ml-3 mt-3 text-lg text-gray-600"
+        >Mengambil data cuaca...</span
+      >
+    </div>
+  </div>
+
+  <div id="error" class="hidden bg-red-50 border border-red-200 rounded-md p-4">
+    <div class="text-red-800" id="error-message"></div>
+    <button
+      onclick="fetchWeatherData()"
+      class="mt-2 bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700"
+    >
+      Coba Lagi
+    </button>
+  </div>
+
+  <div id="dashboard-content" class="hidden">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <div class="lg:col-span-2 space-y-8">
+        <!-- Weather Display -->
+        <div class="bg-white rounded-lg shadow-lg p-6">
+          <h2 class="text-2xl font-bold text-gray-900 mb-6">
+            Data Cuaca Tegal
+          </h2>
+
+          <!-- Current Weather -->
+          <div class="mb-8">
+            <h3 class="text-lg font-semibold text-gray-800 mb-4">
+              Cuaca Saat Ini
+            </h3>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <div class="bg-blue-50 p-4 rounded-lg">
+                <div class="flex items-center">
+                  <i class="fas fa-temperature-high text-blue-600"></i>
+                  <span class="ml-2 text-sm text-gray-600">Suhu</span>
+                </div>
+                <p class="text-2xl font-bold text-blue-600" id="current-temp">
+                  --°C
+                </p>
+              </div>
+
+              <div class="bg-green-50 p-4 rounded-lg">
+                <div class="flex items-center">
+                  <i class="fas fa-tint text-green-600"></i>
+                  <span class="ml-2 text-sm text-gray-600">Kelembaban</span>
+                </div>
+                <p
+                  class="text-2xl font-bold text-green-600"
+                  id="current-humidity"
+                >
+                  --%
+                </p>
+              </div>
+
+              <div class="bg-purple-50 p-4 rounded-lg">
+                <div class="flex items-center">
+                  <i class="fas fa-wind text-purple-600"></i>
+                  <span class="ml-2 text-sm text-gray-600">Angin</span>
+                </div>
+                <p class="text-2xl font-bold text-purple-600" id="current-wind">
+                  -- m/s
+                </p>
+              </div>
+
+              <div class="bg-red-50 p-4 rounded-lg">
+                <div class="flex items-center">
+                  <i class="fas fa-eye text-red-600"></i>
+                  <span class="ml-2 text-sm text-gray-600">Visibilitas</span>
+                </div>
+                <p
+                  class="text-2xl font-bold text-red-600"
+                  id="current-visibility"
+                >
+                  -- km
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- 8-Day Forecast -->
+          <div>
+            <h3 class="text-lg font-semibold text-gray-800 mb-4">
+              Prediksi 8 Hari
+            </h3>
+            <div class="overflow-x-auto">
+              <table class="min-w-full">
+                <thead>
+                  <tr class="border-b">
+                    <th class="text-left py-2">Tanggal</th>
+                    <th class="text-left py-2">Suhu Min/Max</th>
+                    <th class="text-left py-2">Hujan</th>
+                    <th class="text-left py-2">Kelembaban</th>
+                  </tr>
+                </thead>
+                <tbody id="forecast-table">
+                  <!-- Forecast data will be inserted here -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- Planting Recommendation -->
+        <div class="bg-white rounded-lg shadow-lg p-6">
+          <h2 class="text-2xl font-bold text-gray-900 mb-6">
+            Rekomendasi Tanam
+          </h2>
+
+          <div id="recommendation-container" class="border rounded-lg p-6">
+            <!-- Recommendation content will be inserted here -->
+          </div>
+        </div>
+      </div>
+
+      <div class="sticky top-20 self-start">
+        <!-- Crop Selector -->
+        <div class="bg-white rounded-lg shadow-lg p-4 space-y-4">
+          <!-- Header -->
+          <div class="flex items-center justify-between">
+            <h2 class="text-lg font-bold text-gray-900 flex items-center">
+              <i class="fas fa-seedling text-green-600 mr-2"></i>
+              Pilih Tanaman
+            </h2>
+            <button
+              id="info-button"
+              class="p-1 text-gray-500 hover:text-green-600 transition-colors"
+              title="Info Tanaman"
+            >
+              <i class="fas fa-info-circle"></i>
+            </button>
+          </div>
+
+          <!-- Dropdown -->
+          <div class="relative">
+            <select
+              id="crop-selector"
+              class="w-full bg-gray-50 border border-gray-300 rounded-lg px-4 py-3 text-left flex items-center justify-between hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-colors"
+            >
+              <!-- Crop options will be inserted here -->
+            </select>
+          </div>
+
+          <!-- Info Tanaman (Collapsible) -->
+          <div
+            id="crop-info"
+            class="hidden bg-green-50 rounded-lg p-4 border border-green-200 animate-in"
+          >
+            <h3 class="font-semibold text-green-800 mb-3 flex items-center">
+              <i class="fas fa-info-circle mr-2"></i>
+              Info <span id="crop-info-name">Tanaman</span>
+            </h3>
+            <div class="text-sm text-green-700 space-y-2">
+              <div class="grid grid-cols-1 gap-2">
+                <div class="flex justify-between">
+                  <span class="font-medium">Suhu optimal:</span>
+                  <span id="crop-info-temp">--°C - --°C</span>
+                </div>
+                <div class="flex justify-between">
+                  <span class="font-medium">Curah hujan:</span>
+                  <span id="crop-info-rain">--mm - --mm</span>
+                </div>
+                <div class="flex justify-between">
+                  <span class="font-medium">Masa tanam:</span>
+                  <span id="crop-info-period">-- hari</span>
+                </div>
+                <div class="flex justify-between">
+                  <span class="font-medium">Kebutuhan air:</span>
+                  <span id="crop-info-water" class="capitalize">--</span>
+                </div>
+              </div>
+              <div class="pt-2 border-t border-green-200">
+                <span class="font-medium">Musim tanam:</span>
+                <p id="crop-info-season" class="text-xs mt-1">--</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Quick Stats -->
+          <div
+            id="crop-stats"
+            class="hidden grid grid-cols-3 gap-2 text-center"
+          >
+            <div class="bg-blue-50 rounded-lg p-2">
+              <div class="text-xs text-blue-600 font-medium">Masa Tanam</div>
+              <div
+                id="crop-stats-period"
+                class="text-sm font-bold text-blue-800"
+              >
+                -- hari
+              </div>
+            </div>
+            <div class="bg-orange-50 rounded-lg p-2">
+              <div class="text-xs text-orange-600 font-medium">Suhu Ideal</div>
+              <div
+                id="crop-stats-temp"
+                class="text-sm font-bold text-orange-800"
+              >
+                --°C
+              </div>
+            </div>
+            <div class="bg-purple-50 rounded-lg p-2">
+              <div class="text-xs text-purple-600 font-medium">Air</div>
+              <div
+                id="crop-stats-water"
+                class="text-sm font-bold text-purple-800 capitalize"
+              >
+                --
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %} {% block scripts %}
+<script>
+  // Global variables
+  let weatherData = null;
+  let crops = [];
+  let selectedCrop = "padi";
+
+  // DOM elements
+  const loadingElement = document.getElementById("loading");
+  const errorElement = document.getElementById("error");
+  const errorMessageElement = document.getElementById("error-message");
+  const dashboardContent = document.getElementById("dashboard-content");
+  const cropSelector = document.getElementById("crop-selector");
+  const infoButton = document.getElementById("info-button");
+  const cropInfo = document.getElementById("crop-info");
+  const cropStats = document.getElementById("crop-stats");
+
+  // Initialize the page
+  document.addEventListener("DOMContentLoaded", async () => {
+    try {
+      // Define crops data directly (backup solution)
+      crops = [
+        {
+          id: "padi",
+          name: "Padi",
+          description: "Tanaman pangan utama",
+          optimalTemp: { min: 22, max: 32 },
+          rainfallNeeds: { min: 150, max: 300 },
+          plantingSeason: "Musim hujan (Nov-Mar)",
+          growthPeriod: 120,
+          waterRequirement: "tinggi",
+        },
+        {
+          id: "jagung",
+          name: "Jagung",
+          description: "Tanaman serealia",
+          optimalTemp: { min: 20, max: 30 },
+          rainfallNeeds: { min: 100, max: 200 },
+          plantingSeason: "Musim kemarau (Apr-Sep)",
+          growthPeriod: 90,
+          waterRequirement: "sedang",
+        },
+        {
+          id: "kedelai",
+          name: "Kedelai",
+          description: "Tanaman kacang-kacangan",
+          optimalTemp: { min: 23, max: 27 },
+          rainfallNeeds: { min: 80, max: 150 },
+          plantingSeason: "Musim kemarau (Apr-Aug)",
+          growthPeriod: 80,
+          waterRequirement: "sedang",
+        },
+        {
+          id: "singkong",
+          name: "Singkong",
+          description: "Tanaman umbi-umbian",
+          optimalTemp: { min: 20, max: 35 },
+          rainfallNeeds: { min: 100, max: 200 },
+          plantingSeason: "Awal musim hujan (Okt-Des)",
+          growthPeriod: 240,
+          waterRequirement: "sedang",
+        },
+        {
+          id: "ubi_jalar",
+          name: "Ubi Jalar",
+          description: "Tanaman umbi-umbian",
+          optimalTemp: { min: 21, max: 27 },
+          rainfallNeeds: { min: 75, max: 150 },
+          plantingSeason: "Musim kemarau (Apr-Aug)",
+          growthPeriod: 120,
+          waterRequirement: "sedang",
+        },
+        {
+          id: "kentang",
+          name: "Kentang",
+          description: "Tanaman umbi-umbian",
+          optimalTemp: { min: 15, max: 20 },
+          rainfallNeeds: { min: 80, max: 150 },
+          plantingSeason: "Dataran tinggi sepanjang tahun",
+          growthPeriod: 90,
+          waterRequirement: "sedang",
+        },
+        {
+          id: "cabai",
+          name: "Cabai",
+          description: "Tanaman hortikultura",
+          optimalTemp: { min: 24, max: 28 },
+          rainfallNeeds: { min: 60, max: 120 },
+          plantingSeason: "Sepanjang tahun",
+          growthPeriod: 100,
+          waterRequirement: "sedang",
+        },
+        {
+          id: "tomat",
+          name: "Tomat",
+          description: "Tanaman sayuran",
+          optimalTemp: { min: 20, max: 25 },
+          rainfallNeeds: { min: 50, max: 100 },
+          plantingSeason: "Musim kemarau (Apr-Sep)",
+          growthPeriod: 85,
+          waterRequirement: "sedang",
+        },
+        {
+          id: "terong",
+          name: "Terong",
+          description: "Tanaman sayuran buah",
+          optimalTemp: { min: 22, max: 30 },
+          rainfallNeeds: { min: 70, max: 130 },
+          plantingSeason: "Sepanjang tahun",
+          growthPeriod: 85,
+          waterRequirement: "sedang",
+        },
+        {
+          id: "timun",
+          name: "Timun",
+          description: "Tanaman sayuran buah",
+          optimalTemp: { min: 20, max: 30 },
+          rainfallNeeds: { min: 60, max: 120 },
+          plantingSeason: "Sepanjang tahun",
+          growthPeriod: 55,
+          waterRequirement: "sedang",
+        },
+        {
+          id: "labu",
+          name: "Labu",
+          description: "Tanaman sayuran buah",
+          optimalTemp: { min: 18, max: 27 },
+          rainfallNeeds: { min: 80, max: 150 },
+          plantingSeason: "Musim kemarau (Apr-Sep)",
+          growthPeriod: 95,
+          waterRequirement: "sedang",
+        },
+        {
+          id: "bayam",
+          name: "Bayam",
+          description: "Tanaman sayuran hijau",
+          optimalTemp: { min: 20, max: 30 },
+          rainfallNeeds: { min: 50, max: 100 },
+          plantingSeason: "Sepanjang tahun",
+          growthPeriod: 30,
+          waterRequirement: "sedang",
+        },
+        {
+          id: "kangkung",
+          name: "Kangkung",
+          description: "Tanaman sayuran hijau",
+          optimalTemp: { min: 25, max: 35 },
+          rainfallNeeds: { min: 80, max: 150 },
+          plantingSeason: "Sepanjang tahun",
+          growthPeriod: 25,
+          waterRequirement: "tinggi",
+        },
+        {
+          id: "sawi",
+          name: "Sawi",
+          description: "Tanaman sayuran hijau",
+          optimalTemp: { min: 20, max: 25 },
+          rainfallNeeds: { min: 60, max: 120 },
+          plantingSeason: "Sepanjang tahun",
+          growthPeriod: 40,
+          waterRequirement: "sedang",
+        },
+        {
+          id: "kacang_tanah",
+          name: "Kacang Tanah",
+          description: "Tanaman kacang-kacangan",
+          optimalTemp: { min: 23, max: 33 },
+          rainfallNeeds: { min: 80, max: 130 },
+          plantingSeason: "Musim kemarau (Apr-Sep)",
+          growthPeriod: 90,
+          waterRequirement: "sedang",
+        },
+        {
+          id: "kacang_panjang",
+          name: "Kacang Panjang",
+          description: "Tanaman sayuran polong",
+          optimalTemp: { min: 20, max: 30 },
+          rainfallNeeds: { min: 70, max: 120 },
+          plantingSeason: "Sepanjang tahun",
+          growthPeriod: 60,
+          waterRequirement: "sedang",
+        },
+        {
+          id: "buncis",
+          name: "Buncis",
+          description: "Tanaman sayuran polong",
+          optimalTemp: { min: 18, max: 25 },
+          rainfallNeeds: { min: 60, max: 110 },
+          plantingSeason: "Musim kemarau (Apr-Sep)",
+          growthPeriod: 65,
+          waterRequirement: "sedang",
+        },
+        {
+          id: "bawang_merah",
+          name: "Bawang Merah",
+          description: "Tanaman bumbu dapur",
+          optimalTemp: { min: 25, max: 32 },
+          rainfallNeeds: { min: 40, max: 80 },
+          plantingSeason: "Musim kemarau (Apr-Sep)",
+          growthPeriod: 70,
+          waterRequirement: "rendah",
+        },
+        {
+          id: "bawang_putih",
+          name: "Bawang Putih",
+          description: "Tanaman bumbu dapur",
+          optimalTemp: { min: 16, max: 25 },
+          rainfallNeeds: { min: 30, max: 70 },
+          plantingSeason: "Musim kemarau (Apr-Aug)",
+          growthPeriod: 90,
+          waterRequirement: "rendah",
+        },
+        {
+          id: "wortel",
+          name: "Wortel",
+          description: "Tanaman sayuran akar",
+          optimalTemp: { min: 16, max: 22 },
+          rainfallNeeds: { min: 60, max: 120 },
+          plantingSeason: "Musim kemarau (Apr-Sep)",
+          growthPeriod: 75,
+          waterRequirement: "sedang",
+        },
+      ];
+
+      // Populate crop selector
+      populateCropSelector();
+
+      // Fetch weather data
+      await fetchWeatherData();
+
+      // Set up event listeners
+      cropSelector.addEventListener("change", handleCropChange);
+      infoButton.addEventListener("click", toggleCropInfo);
+    } catch (error) {
+      showError(`Error initializing page: ${error.message}`);
+    }
+  });
+
+  // Fetch weather data
+  async function fetchWeatherData() {
+    showLoading();
+    try {
+      const response = await fetch("/api/weather");
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      weatherData = await response.json();
+
+      // Update UI with weather data
+      updateWeatherDisplay();
+
+      // Get recommendation for selected crop
+      await getRecommendation();
+
+      // Show dashboard content
+      hideLoading();
+      dashboardContent.classList.remove("hidden");
+    } catch (error) {
+      showError(
+        `Ada kesalahan: API tidak berfungsi. Silahkan tunggu beberapa saat atau hubungi developer. (${error.message})`
+      );
+    }
+  }
+
+  // Get recommendation for selected crop
+  async function getRecommendation() {
+    try {
+      const response = await fetch(
+        `/api/recommendation?crop_id=${selectedCrop}`
+      );
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const recommendation = await response.json();
+      updateRecommendationDisplay(recommendation);
+    } catch (error) {
+      showError(`Error getting recommendation: ${error.message}`);
+    }
+  }
+
+  // Update weather display
+  function updateWeatherDisplay() {
+    // Update current weather
+    document.getElementById(
+      "current-temp"
+    ).textContent = `${weatherData.current.temp}°C`;
+    document.getElementById(
+      "current-humidity"
+    ).textContent = `${weatherData.current.humidity}%`;
+    document.getElementById(
+      "current-wind"
+    ).textContent = `${weatherData.current.windSpeed} m/s`;
+    document.getElementById(
+      "current-visibility"
+    ).textContent = `${weatherData.current.visibility} km`;
+
+    // Update forecast table
+    const forecastTable = document.getElementById("forecast-table");
+    forecastTable.innerHTML = "";
+
+    weatherData.forecast.slice(0, 8).forEach((day) => {
+      const row = document.createElement("tr");
+      row.className = "border-b";
+      row.innerHTML = `
+                <td class="py-2">${day.date}</td>
+                <td class="py-2">${day.tempMin}°C / ${day.tempMax}°C</td>
+                <td class="py-2">${day.rainfall}mm</td>
+                <td class="py-2">${day.humidity}%</td>
+            `;
+      forecastTable.appendChild(row);
+    });
+  }
+
+  // Update recommendation display
+  function updateRecommendationDisplay(recommendation) {
+    const container = document.getElementById("recommendation-container");
+
+    // Set status class
+    container.className = "border rounded-lg p-6";
+    switch (recommendation.status) {
+      case "optimal":
+        container.classList.add("status-optimal");
+        break;
+      case "good":
+        container.classList.add("status-good");
+        break;
+      case "poor":
+        container.classList.add("status-poor");
+        break;
+      case "bad":
+        container.classList.add("status-bad");
+        break;
+      default:
+        container.classList.add("bg-gray-50", "border-gray-200");
+    }
+
+    // Get status icon
+    let statusIcon;
+    switch (recommendation.status) {
+      case "optimal":
+        statusIcon = '<i class="fas fa-check-circle text-green-600"></i>';
+        break;
+      case "good":
+        statusIcon = '<i class="fas fa-check-circle text-yellow-600"></i>';
+        break;
+      case "poor":
+        statusIcon =
+          '<i class="fas fa-exclamation-triangle text-orange-600"></i>';
+        break;
+      case "bad":
+        statusIcon = '<i class="fas fa-times-circle text-red-600"></i>';
+        break;
+      default:
+        statusIcon =
+          '<i class="fas fa-exclamation-triangle text-gray-600"></i>';
+    }
+
+    // Build HTML
+    let html = `
+            <div class="flex items-center mb-4">
+                ${statusIcon}
+                <h3 class="ml-3 text-xl font-semibold text-gray-900">Status: ${
+                  recommendation.statusText
+                }</h3>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                <div>
+                    <h4 class="font-semibold text-gray-800 mb-2">Prediksi Cuaca 8 Hari Ke Depan</h4>
+                    <div class="space-y-2 text-sm">
+                        <p>
+                            <strong>Suhu rata-rata:</strong> ${
+                              recommendation.avgTemp
+                            }°C
+                        </p>
+                        <p>
+                            <strong>Prediksi hujan:</strong> ${
+                              recommendation.totalRainfall
+                            }mm
+                        </p>
+                        <p>
+                            <strong>Kelembaban rata-rata:</strong> ${
+                              recommendation.avgHumidity
+                            }%
+                        </p>
+                    </div>
+                </div>
+
+                <div>
+                    <h4 class="font-semibold text-gray-800 mb-2">Tanaman Dipilih</h4>
+                    <p class="text-lg font-medium text-green-600">
+                        ${getCropName(selectedCrop)}
+                    </p>
+                </div>
+            </div>
+
+            <div class="border-t pt-4">
+                <div class="flex items-center mb-3">
+                    <i class="fas fa-calendar text-blue-600"></i>
+                    <h4 class="ml-2 font-semibold text-gray-800">Rekomendasi:</h4>
+                </div>
+                <p class="text-lg text-gray-700 mb-3">${
+                  recommendation.recommendation
+                }</p>
+        `;
+
+    // Add best dates if available
+    if (
+      recommendation.bestDates.length > 0 &&
+      recommendation.status !== "bad"
+    ) {
+      html += `
+                <div>
+                    <p class="font-medium text-gray-800 mb-2">Tanggal terbaik untuk mulai tanam:</p>
+                    <div class="flex flex-wrap gap-2">
+            `;
+
+      recommendation.bestDates.forEach((date) => {
+        html += `<span class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm">${date}</span>`;
+      });
+
+      html += `
+                    </div>
+                </div>
+            `;
+    }
+
+    html += `</div>`;
+
+    // Add notes if available
+    if (recommendation.notes) {
+      html += `
+                <div class="mt-4 p-3 bg-blue-50 rounded-lg">
+                    <p class="text-sm text-blue-800">
+                        <strong>Catatan:</strong> ${recommendation.notes}
+                    </p>
+                </div>
+            `;
+    }
+
+    container.innerHTML = html;
+  }
+
+  // Populate crop selector
+  function populateCropSelector() {
+    // Group crops by category
+    const cropCategories = {
+      "Tanaman Pangan": crops.filter((crop) =>
+        [
+          "padi",
+          "jagung",
+          "kedelai",
+          "singkong",
+          "ubi_jalar",
+          "kentang",
+        ].includes(crop.id)
+      ),
+      "Sayuran Buah": crops.filter((crop) =>
+        ["cabai", "tomat", "terong", "timun", "labu"].includes(crop.id)
+      ),
+      "Sayuran Hijau": crops.filter((crop) =>
+        ["bayam", "kangkung", "sawi"].includes(crop.id)
+      ),
+      "Sayuran Polong": crops.filter((crop) =>
+        ["kacang_tanah", "kacang_panjang", "buncis"].includes(crop.id)
+      ),
+      "Sayuran Akar": crops.filter((crop) =>
+        ["wortel", "bawang_merah", "bawang_putih"].includes(crop.id)
+      ),
+    };
+
+    // Clear existing options
+    cropSelector.innerHTML = "";
+
+    // Add options by category
+    Object.entries(cropCategories).forEach(([category, categoryCrops]) => {
+      const optgroup = document.createElement("optgroup");
+      optgroup.label = category;
+
+      categoryCrops.forEach((crop) => {
+        const option = document.createElement("option");
+        option.value = crop.id;
+        option.textContent = crop.name;
+        option.selected = crop.id === selectedCrop;
+        optgroup.appendChild(option);
+      });
+
+      cropSelector.appendChild(optgroup);
+    });
+
+    // Update crop info and stats
+    updateCropInfo();
+  }
+
+  // Handle crop change
+  function handleCropChange() {
+    selectedCrop = cropSelector.value;
+    updateCropInfo();
+    getRecommendation();
+  }
+
+  // Toggle crop info
+  function toggleCropInfo() {
+    cropInfo.classList.toggle("hidden");
+  }
+
+  // Update crop info and stats
+  function updateCropInfo() {
+    const crop = crops.find((c) => c.id === selectedCrop);
+    if (!crop) return;
+
+    // Update crop info
+    document.getElementById("crop-info-name").textContent = crop.name;
+    document.getElementById(
+      "crop-info-temp"
+    ).textContent = `${crop.optimalTemp.min}°C - ${crop.optimalTemp.max}°C`;
+    document.getElementById(
+      "crop-info-rain"
+    ).textContent = `${crop.rainfallNeeds.min}mm - ${crop.rainfallNeeds.max}mm`;
+    document.getElementById(
+      "crop-info-period"
+    ).textContent = `${crop.growthPeriod} hari`;
+    document.getElementById("crop-info-water").textContent =
+      crop.waterRequirement;
+    document.getElementById("crop-info-season").textContent =
+      crop.plantingSeason;
+
+    // Update crop stats
+    document.getElementById(
+      "crop-stats-period"
+    ).textContent = `${crop.growthPeriod} hari`;
+    document.getElementById(
+      "crop-stats-temp"
+    ).textContent = `${crop.optimalTemp.min}-${crop.optimalTemp.max}°C`;
+    document.getElementById("crop-stats-water").textContent =
+      crop.waterRequirement;
+
+    // Show crop stats
+    cropStats.classList.remove("hidden");
+  }
+
+  // Helper function to get crop name by ID
+  function getCropName(cropId) {
+    const crop = crops.find((c) => c.id === cropId);
+    return crop ? crop.name : cropId;
+  }
+
+  // Show loading
+  function showLoading() {
+    loadingElement.classList.remove("hidden");
+    errorElement.classList.add("hidden");
+    dashboardContent.classList.add("hidden");
+  }
+
+  // Hide loading
+  function hideLoading() {
+    loadingElement.classList.add("hidden");
+  }
+
+  // Show error
+  function showError(message) {
+    loadingElement.classList.add("hidden");
+    errorElement.classList.remove("hidden");
+    dashboardContent.classList.add("hidden");
+    errorMessageElement.textContent = message;
+  }
+</script>
+{% endblock %}
