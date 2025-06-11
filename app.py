@@ -17,12 +17,20 @@ if not API_KEY:
 TEGAL_COORDS = {"lat": -6.8694, "lon": 109.1402}
 
 # Load crop data
-with open('data/crops.json', 'r', encoding='utf-8') as f:
-    crops = json.load(f)
+try:
+    with open('data/crops.json', 'r', encoding='utf-8') as f:
+        crops = json.load(f)
+except FileNotFoundError:
+    print("Warning: crops.json not found. Using empty crops data.")
+    crops = []
 
 # Load planting rules
-with open('data/planting_rules.json', 'r', encoding='utf-8') as f:
-    planting_rules = json.load(f)
+try:
+    with open('data/planting_rules.json', 'r', encoding='utf-8') as f:
+        planting_rules = json.load(f)
+except FileNotFoundError:
+    print("Warning: planting_rules.json not found. Using empty planting rules.")
+    planting_rules = {}
 
 
 # route app
@@ -38,7 +46,6 @@ def dashboard():
     return render_template('dashboard.html')
 
 
-
 # api
 
 @app.route('/api/weather')
@@ -47,22 +54,22 @@ def get_weather():
     try:
         # Get current weather
         current_url = f"https://api.openweathermap.org/data/2.5/weather?lat={TEGAL_COORDS['lat']}&lon={TEGAL_COORDS['lon']}&appid={API_KEY}&units=metric&lang=id"
-        current_response = requests.get(current_url)
+        current_response = requests.get(current_url, timeout=10)
         current_response.raise_for_status()
         current_data = current_response.json()
 
         # Get forecast data
         forecast_url = f"https://api.openweathermap.org/data/2.5/forecast?lat={TEGAL_COORDS['lat']}&lon={TEGAL_COORDS['lon']}&appid={API_KEY}&units=metric&lang=id"
-        forecast_response = requests.get(forecast_url)
+        forecast_response = requests.get(forecast_url, timeout=10)
         forecast_response.raise_for_status()
         forecast_data = forecast_response.json()
 
-        # Process current weather
+        # Process current weather with error handling
         current = {
             "temp": round(current_data["main"]["temp"]),
             "humidity": current_data["main"]["humidity"],
-            "windSpeed": round(current_data["wind"]["speed"] * 10) / 10,
-            "visibility": round(current_data["visibility"] / 1000),
+            "windSpeed": round(current_data["wind"].get("speed", 0) * 10) / 10,
+            "visibility": round(current_data.get("visibility", 0) / 1000),
             "description": current_data["weather"][0]["description"],
             "pressure": current_data["main"]["pressure"]
         }
@@ -79,6 +86,10 @@ def get_weather():
                 "coords": TEGAL_COORDS
             }
         })
+    except requests.exceptions.RequestException as e:
+        return jsonify({"error": f"Weather API request failed: {str(e)}"}), 500
+    except KeyError as e:
+        return jsonify({"error": f"Missing data in API response: {str(e)}"}), 500
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
@@ -108,22 +119,22 @@ def get_weather_data():
     try:
         # Get current weather
         current_url = f"https://api.openweathermap.org/data/2.5/weather?lat={TEGAL_COORDS['lat']}&lon={TEGAL_COORDS['lon']}&appid={API_KEY}&units=metric&lang=id"
-        current_response = requests.get(current_url)
+        current_response = requests.get(current_url, timeout=10)
         current_response.raise_for_status()
         current_data = current_response.json()
 
         # Get forecast data
         forecast_url = f"https://api.openweathermap.org/data/2.5/forecast?lat={TEGAL_COORDS['lat']}&lon={TEGAL_COORDS['lon']}&appid={API_KEY}&units=metric&lang=id"
-        forecast_response = requests.get(forecast_url)
+        forecast_response = requests.get(forecast_url, timeout=10)
         forecast_response.raise_for_status()
         forecast_data = forecast_response.json()
 
-        # Process current weather
+        # Process current weather with error handling
         current = {
             "temp": round(current_data["main"]["temp"]),
             "humidity": current_data["main"]["humidity"],
-            "windSpeed": round(current_data["wind"]["speed"] * 10) / 10,
-            "visibility": round(current_data["visibility"] / 1000),
+            "windSpeed": round(current_data["wind"].get("speed", 0) * 10) / 10,
+            "visibility": round(current_data.get("visibility", 0) / 1000),
             "description": current_data["weather"][0]["description"],
             "pressure": current_data["main"]["pressure"]
         }
@@ -140,6 +151,10 @@ def get_weather_data():
                 "coords": TEGAL_COORDS
             }
         }
+    except requests.exceptions.RequestException as e:
+        raise Exception(f"Weather API request failed: {str(e)}")
+    except KeyError as e:
+        raise Exception(f"Missing data in API response: {str(e)}")
     except Exception as e:
         raise Exception(f"Error fetching weather data: {str(e)}")
 
@@ -162,24 +177,29 @@ def process_forecast_data(forecast_list):
 
         daily_data[date_key]["temps"].append(item["main"]["temp"])
         daily_data[date_key]["humidity"].append(item["main"]["humidity"])
-        daily_data[date_key]["windSpeed"].append(item["wind"]["speed"])
+        daily_data[date_key]["windSpeed"].append(item["wind"].get("speed", 0))
 
-        # Calculate rainfall
+        # Calculate rainfall with error handling
         if "rain" in item and "3h" in item["rain"]:
             daily_data[date_key]["rainfall"] += item["rain"]["3h"]
+        elif "rain" in item and "1h" in item["rain"]:
+            # Some APIs return 1h instead of 3h
+            daily_data[date_key]["rainfall"] += item["rain"]["1h"] * 3
 
     # Convert to array and calculate averages
     result = []
-    for date_key, day in daily_data.items():
-        result.append({
-            "date": day["date"],
-            "tempMin": round(min(day["temps"])),
-            "tempMax": round(max(day["temps"])),
-            "tempAvg": round(sum(day["temps"]) / len(day["temps"])),
-            "humidity": round(sum(day["humidity"]) / len(day["humidity"])),
-            "rainfall": round(day["rainfall"] * 10) / 10,
-            "windSpeed": round((sum(day["windSpeed"]) / len(day["windSpeed"])) * 10) / 10
-        })
+    for date_key in sorted(daily_data.keys()):
+        day = daily_data[date_key]
+        if day["temps"]:  # Ensure we have temperature data
+            result.append({
+                "date": day["date"],
+                "tempMin": round(min(day["temps"])),
+                "tempMax": round(max(day["temps"])),
+                "tempAvg": round(sum(day["temps"]) / len(day["temps"])),
+                "humidity": round(sum(day["humidity"]) / len(day["humidity"])) if day["humidity"] else 0,
+                "rainfall": round(day["rainfall"] * 10) / 10,
+                "windSpeed": round((sum(day["windSpeed"]) / len(day["windSpeed"])) * 10) / 10 if day["windSpeed"] else 0
+            })
 
     return result
 
@@ -212,6 +232,17 @@ def calculate_optimal_planting_time(weather_data, crop_id):
         }
 
     forecast = weather_data["forecast"][:8]  # 8 days ahead
+    
+    if not forecast:  # Check if forecast is empty
+        return {
+            "status": "unknown",
+            "statusText": "Data tidak lengkap",
+            "recommendation": "Tidak dapat memberikan rekomendasi",
+            "bestDates": [],
+            "avgTemp": 0,
+            "totalRainfall": 0,
+            "avgHumidity": 0
+        }
 
     # Calculate averages
     avg_temp = round(sum(day["tempAvg"] for day in forecast) / len(forecast))
@@ -229,34 +260,35 @@ def calculate_optimal_planting_time(weather_data, crop_id):
     # Calculate overall score
     overall_score = (temp_score + rainfall_score + humidity_score) / 3
 
-    # Determine status
+    # Find best planting dates first
+    best_dates = find_best_planting_dates(forecast, rules)
+
+    # Determine status with consistent logic
     if avoidance_issues:
         status = "bad"
         status_text = "Tidak Disarankan"
         recommendation = f"Hindari menanam karena: {', '.join(avoidance_issues)}"
-    elif overall_score >= 0.8:
+        best_dates = []  # Clear dates for bad conditions
+    elif overall_score >= 0.8 and len(best_dates) > 0:
         status = "optimal"
         status_text = "Sangat Baik"
         recommendation = f"Kondisi sangat optimal untuk menanam {crop['name']}. Mulai tanam sekarang!"
-    elif overall_score >= 0.6:
+    elif overall_score >= 0.6 and len(best_dates) > 0:
         status = "good"
         status_text = "Baik"
         recommendation = f"Kondisi baik untuk menanam {crop['name']}. Dapat dimulai dengan persiapan yang baik."
     elif overall_score >= 0.4:
         status = "poor"
         status_text = "Kurang Baik"
-        recommendation = f"Kondisi kurang optimal. Pertimbangkan menunda atau siapkan mitigasi risiko."
+        if len(best_dates) > 0:
+            recommendation = f"Kondisi kurang optimal tapi masih ada beberapa hari yang memungkinkan. Siapkan mitigasi risiko."
+        else:
+            recommendation = f"Kondisi kurang optimal dan tidak ada hari yang cocok. Pertimbangkan menunda penanaman."
     else:
         status = "bad"
         status_text = "Buruk"
         recommendation = f"Kondisi tidak mendukung. Disarankan menunda penanaman."
-
-    # Find best planting dates
-    best_dates = find_best_planting_dates(forecast, rules)
-
-    # If status is bad, empty best dates
-    if status == "bad":
-        best_dates = []
+        best_dates = []  # Clear dates for very poor conditions
 
     # Generate notes
     notes = generate_notes(avg_temp, total_rainfall, avg_humidity, rules, crop)
@@ -342,11 +374,14 @@ def find_best_planting_dates(forecast, rules):
     for day in forecast:
         temp_ok = (rules["temperature"]["acceptable"]["min"] <= day["tempAvg"] <= 
                   rules["temperature"]["acceptable"]["max"])
-        rain_ok = (1 <= day["rainfall"] <= rules["avoidConditions"]["maxDailyRainfall"])
+        # Perbaikan: hujan tidak harus setiap hari, cukup tidak berlebihan
+        rain_ok = day["rainfall"] <= rules["avoidConditions"]["maxDailyRainfall"]
         humidity_ok = (rules["humidity"]["acceptable"]["min"] <= day["humidity"] <= 
                       rules["humidity"]["acceptable"]["max"])
+        # Tambahan: cek suhu minimum tidak terlalu rendah
+        temp_min_ok = day["tempMin"] >= rules["avoidConditions"]["minTemperature"]
 
-        if temp_ok and rain_ok and humidity_ok:
+        if temp_ok and rain_ok and humidity_ok and temp_min_ok:
             best_dates.append(day["date"])
 
     return best_dates[:3]  # Maximum 3 best dates
@@ -370,7 +405,7 @@ def generate_notes(temp, rainfall, humidity, rules, crop):
     elif humidity > rules["humidity"]["optimal"]["max"]:
         notes.append("Kelembaban tinggi, waspadai penyakit jamur")
 
-    return ". ".join(notes)
+    return ". ".join(notes) if notes else "Kondisi dalam batas normal"
 
 if __name__ == '__main__':
     app.run(debug=True)
