@@ -21,6 +21,11 @@
       html {
         font-family: "Poppins", sans-serif;
       }
+
+      /* Smooth transitions for mobile menu */
+      .mobile-menu {
+        transition: all 0.3s ease-in-out;
+      }
     </style>
     {% block head %}{% endblock %}
   </head>
@@ -30,24 +35,85 @@
     >
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between h-16">
+          <!-- Logo -->
           <div class="flex items-center">
             <a href="/" class="flex-shrink-0 flex items-center">
               <i class="fas fa-seedling text-2xl mr-2"></i>
               <span class="font-bold text-xl">Agro Future</span>
             </a>
           </div>
-          <div class="flex items-center">
+
+          <!-- Desktop Navigation -->
+          <div class="hidden md:flex items-center space-x-4">
             <a
               href="/"
-              class="px-3 py-2 rounded-md text-sm font-medium hover:bg-green-700"
+              class="px-3 py-2 rounded-md text-sm font-medium hover:bg-green-700 transition-colors"
               >Beranda</a
             >
             <a
               href="/dashboard"
-              class="px-3 py-2 rounded-md text-sm font-medium hover:bg-green-700"
+              class="px-3 py-2 rounded-md text-sm font-medium hover:bg-green-700 transition-colors"
               >Dashboard</a
             >
           </div>
+
+          <!-- Mobile menu button -->
+          <div class="md:hidden flex items-center">
+            <button
+              type="button"
+              class="mobile-menu-button inline-flex items-center justify-center p-2 rounded-md text-white hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white transition-colors"
+              aria-controls="mobile-menu"
+              aria-expanded="false"
+            >
+              <span class="sr-only">Open main menu</span>
+              <!-- Hamburger icon -->
+              <svg
+                class="hamburger-icon w-6 h-6"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M4 6h16M4 12h16M4 18h16"
+                />
+              </svg>
+              <!-- Close icon (hidden by default) -->
+              <svg
+                class="close-icon w-6 h-6 hidden"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M6 18L18 6M6 6l12 12"
+                />
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Mobile menu -->
+      <div class="mobile-menu md:hidden hidden" id="mobile-menu">
+        <div
+          class="px-2 pt-2 pb-3 space-y-1 bg-green-600 border-t border-green-500"
+        >
+          <a
+            href="/"
+            class="block px-3 py-2 rounded-md text-base font-medium text-white hover:bg-green-700 transition-colors"
+            >Beranda</a
+          >
+          <a
+            href="/dashboard"
+            class="block px-3 py-2 rounded-md text-base font-medium text-white hover:bg-green-700 transition-colors"
+            >Dashboard</a
+          >
         </div>
       </div>
     </nav>
@@ -61,6 +127,55 @@
         </p>
       </div>
     </footer>
+
+    <script>
+      // Mobile menu toggle functionality
+      document.addEventListener("DOMContentLoaded", function () {
+        const mobileMenuButton = document.querySelector(".mobile-menu-button");
+        const mobileMenu = document.getElementById("mobile-menu");
+        const hamburgerIcon = document.querySelector(".hamburger-icon");
+        const closeIcon = document.querySelector(".close-icon");
+
+        mobileMenuButton.addEventListener("click", function () {
+          const isExpanded =
+            mobileMenuButton.getAttribute("aria-expanded") === "true";
+
+          // Toggle menu visibility
+          mobileMenu.classList.toggle("hidden");
+
+          // Toggle icons
+          hamburgerIcon.classList.toggle("hidden");
+          closeIcon.classList.toggle("hidden");
+
+          // Update aria-expanded attribute
+          mobileMenuButton.setAttribute("aria-expanded", !isExpanded);
+        });
+
+        // Close mobile menu when clicking on links
+        const mobileMenuLinks = mobileMenu.querySelectorAll("a");
+        mobileMenuLinks.forEach((link) => {
+          link.addEventListener("click", function () {
+            mobileMenu.classList.add("hidden");
+            hamburgerIcon.classList.remove("hidden");
+            closeIcon.classList.add("hidden");
+            mobileMenuButton.setAttribute("aria-expanded", "false");
+          });
+        });
+
+        // Close mobile menu when clicking outside
+        document.addEventListener("click", function (event) {
+          if (
+            !mobileMenuButton.contains(event.target) &&
+            !mobileMenu.contains(event.target)
+          ) {
+            mobileMenu.classList.add("hidden");
+            hamburgerIcon.classList.remove("hidden");
+            closeIcon.classList.add("hidden");
+            mobileMenuButton.setAttribute("aria-expanded", "false");
+          }
+        });
+      });
+    </script>
 
     {% block scripts %}{% endblock %}
   </body>
